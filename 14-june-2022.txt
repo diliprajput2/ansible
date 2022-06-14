@@ -1,0 +1,50 @@
+1- sudo apt-get update 
+
+ sudo apt-add-repository -y ppa:ansible/ansible 
+
+ then need to refresh the package by executing the below command: 
+ sudo apt-get update 
+
+ Now you can install Ansible: 
+ sudo apt-get install -y ansible
+
+ script---
+ for host in 1 2
+ do
+ ssh-copy-id mhost$host
+ done
+
+
+
+2- Ansible config file at diff locations(to verify the order of ansible searching -
+ 
+ touch /tmp/ansible.cfg
+
+ in--> /home/ansible
+ touch ansible.cfg
+ touch .ansible.cfg
+
+ export ANSIBLE_CONFIG= /tmp/ansible.cfg
+ unset ANSIBLE_CONFIG
+
+3- default inventory file(hosts)
+
+ entry of the managed hosts as group/individual- 
+ example-->  [web]
+             mhost[1:4] 
+ ansible w* -m ping -o
+
+4- host variable and group variable
+
+ example--> [group1]
+            mhost1
+	    mhost2
+	    [group2]
+	    mhost3
+  	    mhost4
+	    [group2:vars]
+	    ansible_user=ansible
+
+5- Ansible modules 
+ ansible-doc -l 
+ex--> user, group, fetch, ping, mount, yum, command etc
