@@ -1,0 +1,115 @@
+6- Ad-hoc commands practical 
+
+working on both the managed hosts 
+mhost1
+mhost2
+
+ansible --help 
+(ansible --list-hosts
+ansible --forks)
+
+I) ansible-doc command (its a default module)
+
+examples--> (i) ansible mhost1 -m command -a "cat /etc/hosts"
+
+            (ii)  ansible all -m command -a "cat /etc/hosts -f 1"
+
+		-f = forks set to 1
+
+		(iii)  ansible all -m command -a "cat /etc/hosts -l mhost1"
+
+            -l = provide the target even we are applying on all managed hosts
+
+II) ansible-doc copy 		
+
+examples--> (i) ansible mhost2 -m copy -a "src=/etc/hosts dest=/tmp/hosts_bkp"
+
+if we want to copy the file from target node and also paste it into the target node, must use remote_src instead of src
+		
+III) ansible-doc file
+
+example--> (i) ansible mhost2 -m file -a "path=/tmp/test state= touch"
+
+IV) ansible-doc user
+
+examples--> (i) ansible mhost2 -m user -a "name=test state=present"
+
+7- Ansible playbooks 
+(hosts, vars, tasks, handlers, roles)
+
+time ansible-playbook "playbook_name" (to check execute time)
+ 
+8- Ansible Variables
+    
+  I)  Named dictionary variable
+    syntax --> vars: 
+		dict:
+			key1: value1
+			key2: value2
+example--> 
+---
+- hosts: mhost1
+  gather_facts: False
+  vars:	
+	dict: 
+		key1: value1
+		key2: value2
+		
+  tasks:
+	- name: Displaying variable
+	  debug:
+			msg: "{{  dict['key2']  }}"
+
+
+  
+ II) Named list variables 
+    syntax--> vars:
+		     list:
+			- item1
+			- item2	
+			- item3
+        msg: "{{  list[0]  }}"
+
+III) mixed variables (dict+list) (dictionary in list)
+     syntax--> vars:
+	                   users:
+				- name: John
+				  age: 25
+				- name: Rach
+				  age:31 
+
+IV) variables defined in YAML file
+      syntax--> vars_files:
+			- var_file.yml (file name)
+
+V) variable provided during playbook execution
+      syntax--> vars_prompt:	
+			   - name: var
+		                 prompt: Enter variable 
+
+
+9- Ansible facts and accessing ansible facts using jinja2 expressions
+
+ example--> 
+---
+- hosts: mhost1
+  gather_facts: True
+  task:
+	- nmae: Displaying facts variables
+	  debug: 
+		    msg: "{{ ansible_facts.all_ipv4_addresses[0]}}"
+
+
+10- filtering ansible facts using gather_subset and filter
+
+example--> ansible mhost -m setup -a "gather_subset=network" --becoome
+
+	   ansible mhost -m setup -a 'gather_subset=network,!min' --becoome
+
+           ansible mhost -m setup -a 'filter=ansible_device,!min' --becoome
+
+
+
+
+
+
